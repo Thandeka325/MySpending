@@ -2,30 +2,114 @@
 {% block content %}
 <h2>Welcome, {{ user.email }}</h2>
 
+<!-- ✅ Set Budget -->
+<h3>Monthly Budget</h3>
+<p><strong>Current Budget:</strong> R{{ user_budget }}</p>
+<form method="POST" action="{{ url_for('main.set_budget') }}">
+  <input type="number" step="0.01" name="budget" placeholder="New budget amount" required>
+  <button type="submit">Update Budget</button>
+</form>
+
+<!-- ✅ Progress Bar -->
+<div style="width: 100%; background: #ddd; height: 25px; border-radius: 5px; overflow: hidden; margin-top: 10px;">
+  <div style="
+    width: {{ (total_spent / user_budget) * 100 }}%;
+    background-color: {% if total_spent > user_budget %}#e74c3c{% else %}#2ecc71{% endif %};
+    height: 100%;
+    text-align: center;
+    color: white;
+    line-height: 25px;">
+    R{{ '%.2f'|format(total_spent) }} spent
+  </div>
+</div>
+
+<hr>
+
+<!-- ✅ Add Expense Form -->
 <h3>Add New Expense</h3>
 <form method="POST" action="{{ url_for('main.add_expense') }}">
   <label>Date:</label><br>
   <input type="date" name="date" required><br>
+
   <label>Category:</label><br>
-  <input type="text" name="category" placeholder="e.g. Food, Transport" required><br>
-  <label>Amount:</label><br>
+  <input type="text" name="category" required><br>
+
+  <label>Amount (R):</label><br>
   <input type="number" step="0.01" name="amount" required><br>
+
   <button type="submit">Add Expense</button>
 </form>
 
 <hr>
 
+<!-- ✅ Expenses Table -->
 <h3>Your Expenses</h3>
-<table border="1">
-  <tr><th>Date</th><th>Category</th><th>Amount</th></tr>
-  {% for expense in user.expenses %}
-  <tr>
-    <td>{{ expense.date }}</td>
-    <td>{{ expense.category }}</td>
-    <td>R{{ '%.2f'|format(expense.amount) }}</td>
-  </tr>
-  {% endfor %}
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Category</th>
+      <th>Amount</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for expense in user.expenses %}
+    <tr>
+      <td>{{ expense.date }}</td>
+      <td>{{ expense.category }}</td>
+      <td>R{{ '%.2f'|format(expense.amount) }}</td>
+      <td>
+        <form action="{{ url_for('main.delete_expense', id=expense.id) }}" method="POST" style="display:inline;">
+          <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+        </form>
+        <a href="{{ url_for('main.edit_expense', id=expense.id) }}">Edit</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
-<h4>Total Spent: R{{ user.expenses | sum(attribute='amount') }}</h4>
+<h4>Total Spent: R{{ '%.2f'|format(total_spent) }}</h4>
+
+<hr>
+
+<!-- ✅ Pie Chart -->
+<h3>Spending by Category</h3>
+<canvas id="categoryChart" width="400" height="200"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('categoryChart').getContext('2d');
+  const categoryChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: {{ categories | tojson }},
+      datasets: [{
+        label: 'Spending by Category',
+        data: {{ amounts | tojson }},
+        backgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#2ecc71', '#e67e22', '#9b59b6', '#95a5a6'
+        ],
+        hoverOffset: 10
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.formattedValue || '';
+              return `${label}: R${value}`;
+            }
+          }
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+</script>
 {% endblock %}

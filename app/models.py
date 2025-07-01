@@ -10,6 +10,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     expenses = db.relationship('Expense', backref='user', lazy=True)
+    budget = db.Column(db.Float, default=1000.0)
 
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)

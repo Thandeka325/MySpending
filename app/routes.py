@@ -1,62 +1,38 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
-from .models import User
-from . import db
-from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-from .models import Expense
-from datetime import datetime
+from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
+from flask_login import login_required, current_user
+from .models import Expense, db
+from collections import defaultdict
 
 main = Blueprint('main', __name__)
 
 @main.route('/')
-def home():
-    return redirect(url_for('main.login'))
-
-@main.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        user = User.query.filter_by(email=email).first()
-        if not user or not check_password_hash(user.password, password):
-            flash('Invalid login credentials')
-            return redirect(url_for('main.login'))
-
-        login_user(user)
-        return redirect(url_for('main.dashboard'))
-
-    return render_template('login.html')
-
-@main.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        user = User.query.filter_by(email=email).first()
-        if user:
-            flash('Email already registered')
-            return redirect(url_for('main.register'))
-
-        new_user = User(email=email, password=generate_password_hash(password, method='sha256'))
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Registration successful. Please login.')
-        return redirect(url_for('main.login'))
-
-    return render_template('register.html')
-
-@main.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('main.login'))
+def index():
+    return render_template('index.html')
 
 @main.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', user=current_user)
+    expenses = current_user.expenses
+    category_totals = defaultdict(float)
+    total_spent = 0.0
+
+    for e in expenses:
+        category_totals[e.category] += e.amount
+        total_spent += e.amount
+
+    categories = list(category_totals.keys())
+    amounts = list(category_totals.values())
+
+    user_budget = current_user.budget or 1000.0
+
+    return render_template(
+        'dashboard.html',
+        user=current_user,
+        categories=categories,
+        amounts=amounts,
+        total_spent=total_spent,
+        user_budget=user_budget
+    )
 
 @main.route('/add-expense', methods=['POST'])
 @login_required
@@ -65,8 +41,50 @@ def add_expense():
     category = request.form.get('category')
     amount = float(request.form.get('amount'))
 
-    new_expense = Expense(date=date, category=category, amount=amount, user_id=current_user.id)
+    new_expense = Expense(
+        date=date,
+        category=category,
+        amount=amount,
+        user_id=current_user.id
+    )
     db.session.add(new_expense)
     db.session.commit()
     flash('Expense added!')
+    return redirect(url_for('main.dashboard'))
+
+@main.route('/edit-expense/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_expense(id):
+    expense = Expense.query.get_or_404(id)
+    if expense.user_id != current_user.id:
+        abort(403)
+
+    if request.method == 'POST':
+        expense.date = request.form.get('date')
+        expense.category = request.form.get('category')
+        expense.amount = float(request.form.get('amount'))
+        db.session.commit()
+        flash('Expense updated.')
+        return redirect(url_for('main.dashboard'))
+
+    return render_template('edit_expense.html', expense=expense)
+
+@main.route('/delete-expense/<int:id>', methods=['POST'])
+@login_required
+def delete_expense(id):
+    expense = Expense.query.get_or_404(id)
+    if expense.user_id != current_user.id:
+        abort(403)
+    db.session.delete(expense)
+    db.session.commit()
+    flash('Expense deleted.')
+    return redirect(url_for('main.dashboard'))
+
+@main.route('/set-budget', methods=['POST'])
+@login_required
+def set_budget():
+    new_budget = request.form.get('budget')
+    current_user.budget = float(new_budget)
+    db.session.commit()
+    flash('Budget updated!')
     return redirect(url_for('main.dashboard'))
