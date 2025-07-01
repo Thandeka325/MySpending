@@ -11,6 +11,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'your-secret-key'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///myspending.db'
+    app.jinja_env.filters['sum'] = lambda iterable, attr: sum(getattr(i, attr) for i in iterable)
 
     db.init_app(app)
     login_manager.init_app(app)

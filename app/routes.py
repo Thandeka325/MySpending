@@ -3,6 +3,8 @@ from .models import User
 from . import db
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from .models import Expense
+from datetime import datetime
 
 main = Blueprint('main', __name__)
 
@@ -55,3 +57,16 @@ def logout():
 @login_required
 def dashboard():
     return render_template('dashboard.html', user=current_user)
+
+@main.route('/add-expense', methods=['POST'])
+@login_required
+def add_expense():
+    date = request.form.get('date')
+    category = request.form.get('category')
+    amount = float(request.form.get('amount'))
+
+    new_expense = Expense(date=date, category=category, amount=amount, user_id=current_user.id)
+    db.session.add(new_expense)
+    db.session.commit()
+    flash('Expense added!')
+    return redirect(url_for('main.dashboard'))

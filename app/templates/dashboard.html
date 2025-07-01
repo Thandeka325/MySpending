@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Welcome, {{ user.email }}</h2>
+
+<h3>Add New Expense</h3>
+<form method="POST" action="{{ url_for('main.add_expense') }}">
+  <label>Date:</label><br>
+  <input type="date" name="date" required><br>
+  <label>Category:</label><br>
+  <input type="text" name="category" placeholder="e.g. Food, Transport" required><br>
+  <label>Amount:</label><br>
+  <input type="number" step="0.01" name="amount" required><br>
+  <button type="submit">Add Expense</button>
+</form>
+
+<hr>
+
+<h3>Your Expenses</h3>
+<table border="1">
+  <tr><th>Date</th><th>Category</th><th>Amount</th></tr>
+  {% for expense in user.expenses %}
+  <tr>
+    <td>{{ expense.date }}</td>
+    <td>{{ expense.category }}</td>
+    <td>R{{ '%.2f'|format(expense.amount) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h4>Total Spent: R{{ user.expenses | sum(attribute='amount') }}</h4>
+{% endblock %}
