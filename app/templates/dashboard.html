@@ -2,7 +2,7 @@
 {% block content %}
 <h2>Welcome, {{ user.email }}</h2>
 
-<!-- ✅ Set Budget -->
+<!-- Set Budget -->
 <h3>Monthly Budget</h3>
 <p><strong>Current Budget:</strong> R{{ user_budget }}</p>
 <form method="POST" action="{{ url_for('main.set_budget') }}">
@@ -10,7 +10,7 @@
   <button type="submit">Update Budget</button>
 </form>
 
-<!-- ✅ Progress Bar -->
+<!-- Progress Bar -->
 <div style="width: 100%; background: #ddd; height: 25px; border-radius: 5px; overflow: hidden; margin-top: 10px;">
   <div style="
     width: {{ (total_spent / user_budget) * 100 }}%;
@@ -25,7 +25,7 @@
 
 <hr>
 
-<!-- ✅ Add Expense Form -->
+<!-- Add Expense Form -->
 <h3>Add New Expense</h3>
 <form method="POST" action="{{ url_for('main.add_expense') }}">
   <label>Date:</label><br>
@@ -42,7 +42,7 @@
 
 <hr>
 
-<!-- ✅ Expenses Table -->
+<!-- Expenses Table -->
 <h3>Your Expenses</h3>
 <table border="1" cellpadding="5" cellspacing="0">
   <thead>
@@ -74,7 +74,7 @@
 
 <hr>
 
-<!-- ✅ Pie Chart -->
+<!-- Pie Chart -->
 <h3>Spending by Category</h3>
 <canvas id="categoryChart" width="400" height="200"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
