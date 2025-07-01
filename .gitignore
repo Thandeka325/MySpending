@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Environment
+venv/
+.env
+
+# SQLite DB (optional)
+*.db
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
