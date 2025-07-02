@@ -1,5 +1,38 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1>Welcome to MySpending!</h1>
-<p><a href="{{ url_for('main.login') }}">Login</a> or <a href="{{ url_for('main.register') }}">Register</a> to begin tracking your expenses.</p>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Welcome to MySpending!</h1>
+    <p>Track your expenses, set budgets, and take control of your finances with ease.</p>
+    <a href="{{ url_for('main.register') }}" class="btn-primary">Get Started</a>
+  </div>
+  <div class="hero-image">
+    <img src="{{ url_for('static', filename='wallet-illustration.png') }}" alt="Spending illustration">
+  </div>
+</section>
+
+<!-- Features Section -->
+<section id="features">
+  <h2>Why Choose MySpending?</h2>
+  <div class="features-grid">
+    <div class="feature-item">
+      <img src="{{ url_for('static', filename='icon-track.png') }}" alt="Track expenses">
+      <h3>Track Spending</h3>
+      <p>Log expenses quickly and categorize them for insights.</p>
+    </div>
+    <div class="feature-item">
+      <img src="{{ url_for('static', filename='icon-budget.png') }}" alt="Set budgets">
+      <h3>Set Budgets</h3>
+      <p>Stay on top of your financial goals with monthly limits.</p>
+    </div>
+    <div class="feature-item">
+      <img src="{{ url_for('static', filename='icon-chart.png') }}" alt="Analyze trends">
+      <h3>Visualize Trends</h3>
+      <p>Understand your habits with charts and summaries.</p>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
