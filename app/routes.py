@@ -18,14 +18,15 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        user = User.query.filter_by(email=email).first()
 
+        user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
             flash('Logged in successfully.')
             return redirect(url_for('main.dashboard'))
         else:
-            flash('Invalid email or password.')
+            flash('Invalid email or password.', 'danger')
+            return redirect(url_for('main.login'))
     return render_template('login.html')
 
 @main.route('/register', methods=['GET', 'POST'])
@@ -40,15 +41,14 @@ def register():
             return redirect(url_for('main.register'))
 
         if len(password) < 8 or not re.search(r'[A-Za-z]', password) or not re.search(r'\d', password):
-            flash('Password must be at least 8 characters long and contain letters and numbers.')
+            flash('Password must be at least 8 characters long and include a letter and a numbers.' 'danger')
             return redirect(url_for('main.register'))
 
         hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
         new_user = User(name=name, email=email, password=hashed_pw)
-
         db.session.add(new_user)
         db.session.commit()
-        flash('Account created. Please log in.')
+        flash('Registration successful! You can now log in.', 'success')
         return redirect(url_for('main.login'))
     return render_template('register.html')
 
@@ -154,3 +154,8 @@ def export_csv():
     response.headers['Content-Disposition'] = 'attachment; filename=expenses.csv'
     response.headers['Content-Type'] = 'text/csv'
     return response
+
+@main.route('/forgot-password')
+def forgot_password():
+    flash("Password recovery is not implemented yet. Please contact support.", "warning")
+    return redirect(url_for('main.login'))
