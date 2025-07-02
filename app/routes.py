@@ -5,6 +5,7 @@ from .models import db, User, Expense
 from collections import defaultdict
 from io import StringIO
 import csv
+import re
 
 main = Blueprint('main', __name__)
 
