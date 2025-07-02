@@ -35,7 +35,11 @@ def register():
         password = request.form.get('password')
 
         if User.query.filter_by(email=email).first():
-            flash('Email already registered.')
+            flash('Email already exists.')
+            return redirect(url_for('main.register'))
+
+        if len(password) < 8 or not re.search(r'[A-Za-z]', password) or not re.search(r'\d', password):
+            flash('Password must be at least 8 characters long and contain letters and numbers.')
             return redirect(url_for('main.register'))
 
         hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
