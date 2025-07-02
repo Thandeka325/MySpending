@@ -38,7 +38,7 @@ def register():
             flash('Email already registered.')
             return redirect(url_for('main.register'))
 
-        hashed_pw = generate_password_hash(password, method='sha256')
+        hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
         new_user = User(name=name, email=email, password=hashed_pw)
 
         db.session.add(new_user)
