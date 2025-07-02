@@ -2,6 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask_login import login_required, current_user
 from .models import Expense, db
 from collections import defaultdict
+from io import StringIO
+from flask import make_response
+
 
 main = Blueprint('main', __name__)
 
@@ -88,3 +91,22 @@ def set_budget():
     db.session.commit()
     flash('Budget updated!')
     return redirect(url_for('main.dashboard'))
+
+@main.route('/export-csv')
+@login_required
+def export_csv():
+    output = StringIO()
+    writer = csv.writer(output)
+
+    # Write header
+    writer.writerow(['Date', 'Category', 'Amount'])
+
+    # Write data
+    for e in current_user.expenses:
+        writer.writerow([e.date, e.category, f'{e.amount:2f}'])
+
+    # Prepare response
+    response = make_response(output.getvalue())
+    response.headers['Content-Disposition'] = 'attachment; filename=expenses.csv'
+    response.headers['Content-Type'] = 'text/csv'
+    return response

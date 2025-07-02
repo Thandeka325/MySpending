@@ -70,6 +70,10 @@
   </tbody>
 </table>
 
+<form action="{{ url_for('main.export_csv') }}" method="GET">
+	<button type="submit">Export to CSV</button>
+</form>
+
 <h4>Total Spent: R{{ '%.2f'|format(total_spent) }}</h4>
 
 <hr>
