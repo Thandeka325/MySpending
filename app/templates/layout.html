@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f2f4f8;
             margin: 0;
             padding: 0;
@@ -32,7 +32,7 @@
         }
 
         .brand {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: bold;
         }
 
@@ -50,15 +50,31 @@
             margin: 1rem auto;
             max-width: 500px;
             border-radius: 5px;
+            font-weight: 500;
+        }
+
+        .flash.success {
             color: #155724;
             background-color: #d4edda;
             border: 1px solid #c3e6cb;
         }
 
-        .error {
+        .flash.danger {
             color: #721c24;
             background-color: #f8d7da;
             border: 1px solid #f5c6cb;
+        }
+
+        .flash.warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+        }
+
+        .flash.info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
         }
 
         ul {
@@ -69,14 +85,14 @@
 </head>
 <body>
     <div class="navbar">
-        <div class="brand">MySpending</div>
+        <div class="brand">💰 MySpending</div>
         <div>
             {% if current_user.is_authenticated %}
                 <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
-                <a href="{{ url_for('auth.logout') }}">Logout</a>
+                <a href="{{ url_for('main.logout') }}">Logout</a>
             {% else %}
-                <a href="{{ url_for('auth.login') }}">Login</a>
-                <a href="{{ url_for('auth.register') }}">Register</a>
+                <a href="{{ url_for('main.login') }}">Login</a>
+                <a href="{{ url_for('main.register') }}">Register</a>
             {% endif %}
         </div>
     </div>
@@ -85,7 +101,7 @@
       {% if messages %}
         <div class="container">
           {% for category, message in messages %}
-            <div class="flash {% if category == 'error' %}error{% endif %}">
+            <div class="flash {{ category }}">
               {{ message }}
             </div>
           {% endfor %}
