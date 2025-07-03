@@ -1,4 +1,3 @@
-# MySpending
 ![Logo](https://github.com/user-attachments/assets/ede2b57f-7ada-4217-9720-f5a67a186714)
 
 MySpending is a personal expense tracker web application that helps users monitor their daily spending, set budgets, and analyze expenses through interactive visualizations. Built with Flask, SQLite, and Chart.js, it's designed to be simple, intuitive, and mobile-friendly.
