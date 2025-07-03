@@ -69,8 +69,11 @@ myspending/
 # 👩🏽‍💻 Author
 
 Thandeka Siphiwokuhle Mavundla
+
 Senior Research Assistant in Bioinformatics
+
 💻 ALX Software Engineering Student
+
 📫 [LinkedIn](www.linkedin.com/in/thandeka-mavundla-01b232188)
 
 # 📄 License
