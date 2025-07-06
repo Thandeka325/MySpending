@@ -50,12 +50,12 @@ myspending/
 
 - Passwords are securely hashed using `werkzeug.security`.
 - User sessions are managed with Flask-Login.
-- Access to dashboard and budget features requires login.
+- Access to the dashboard and budget features requires login.
 
 # 📤 Deployment
 
 - Deployed to Render
-- Link to deployed app:
+- Link to deployed app: https://myspending-1juh.onrender.com
 
 # 📌 Future Improvements
 
@@ -64,7 +64,7 @@ myspending/
 - ✅ Monthly summary emails
 - 🌍 Multi-currency support
 - 📱 PWA/mobile offline mode
-- ✅ Link banking app to track expenses and automate expense summarry
+- ✅ Link banking app to track expenses and automate expense summary
 
 # 👩🏽‍💻 Author
 
